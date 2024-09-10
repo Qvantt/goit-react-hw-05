@@ -3,9 +3,13 @@ import { getMoviesPage } from "../../service/movies-page";
 import MovieList from "../../components/MovieList/MovieList";
 import SearchForm from "../../components/SearchForm/SearchForm";
 import { useLocation, useSearchParams } from "react-router-dom";
+import Loader from "../../components/Loader/Loader";
+import Error from "../../components/Error/Error";
 
 export default function MoviesPage() {
   const [movie, setMovie] = useState([]);
+  const [error, setError] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   const [params] = useSearchParams();
 
@@ -18,8 +22,15 @@ export default function MoviesPage() {
       return;
     }
     async function getData() {
-      const response = await getMoviesPage(query);
-      setMovie(response);
+      setLoader(true);
+      try {
+        const response = await getMoviesPage(query);
+        setMovie(response);
+      } catch {
+        setError(true);
+      } finally {
+        setLoader(false);
+      }
     }
     getData();
   }, [query]);
@@ -27,7 +38,9 @@ export default function MoviesPage() {
   return (
     <>
       <SearchForm />
-      {movie && <MovieList movie={movie} />}
+      {loader && <Loader />}
+      {error && <Error />}
+      {movie && <MovieList movie={movie} state={{ from: location }} />}
     </>
   );
 }
