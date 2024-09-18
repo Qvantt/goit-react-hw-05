@@ -1,17 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-export default function MovieList({ movie, state }) {
+export default function MovieList({ list }) {
+  const location = useLocation();
+
   return (
-    <>
-      <ul>
-        {movie.map((item) => (
-          <li key={item.id}>
-            <Link to={`/movies/${item.id}`} state={state}>
-              {item.title}
+    <ul>
+      {list.map(({ id, title }) => {
+        return (
+          <li key={id}>
+            <Link to={`/movies/${id}`} state={location}>
+              {title}
             </Link>
           </li>
-        ))}
-      </ul>
-    </>
+        );
+      })}
+    </ul>
   );
 }

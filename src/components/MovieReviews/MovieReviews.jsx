@@ -1,30 +1,38 @@
-import { getReviews } from "../../service/movies-reviews";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { fetchRequest } from "../../themoviedb-api";
 import { useParams } from "react-router-dom";
+import MovieReviewList from "../MovieReviewList/MovieReviewList";
 
 export default function MovieReviews() {
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const { movieId } = useParams();
 
   useEffect(() => {
-    async function getData() {
-      const response = await getReviews(movieId);
-      setReviews(response.data.results);
-      console.log(response.data.results);
+    async function getReviews() {
+      try {
+        setLoading(true);
+        setError(false);
+        const res = await fetchRequest(
+          `https://api.themoviedb.org/3/movie/${movieId}/reviews`
+        );
+        setReviews(res.data.results);
+      } catch (error) {
+        console.error(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     }
-    getData();
+    getReviews();
   }, [movieId]);
 
   return (
     <>
-      <ul>
-        {reviews.map((item) => (
-          <li key={item.id}>
-            <p>Author: {item.author}</p>
-            <p>{item.content}</p>
-          </li>
-        ))}
-      </ul>
+      {error && <p>Something went wrong! Please try again later.</p>}
+      {loading && <p> Loading...</p>}
+      {reviews && <MovieReviewList reviews={reviews} />}
     </>
   );
 }

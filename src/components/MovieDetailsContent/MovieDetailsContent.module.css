@@ -1,0 +1,17 @@
+.wrapper {
+  display: flex;
+  border-bottom: 1px solid #000;
+  box-shadow: 0 3px 0 rgb(209, 207, 207);
+  padding: 10px;
+}
+.textWrapper {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 3px 0 rgb(209, 207, 207);
+}
+.image {
+  object-fit: cover;
+  height: auto;
+}
+.contentWrapper {
+  padding: 10px;
+}
