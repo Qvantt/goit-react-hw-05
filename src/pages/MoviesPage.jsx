@@ -13,15 +13,15 @@ export default function MoviesPage() {
   const [error, setError] = useState(false);
 
   const handleSubmit = (value, actions) => {
-    if (value === "") return;
+    if (value.search.trim() === "") return;
     setQuery(value.search);
-    const q = searchParams.get("q");
     setSearchParams({ q: value.search });
     actions.resetForm();
   };
 
   useEffect(() => {
     if (!query) return;
+
     async function moviesRequest() {
       try {
         setMovies([]);
@@ -38,6 +38,7 @@ export default function MoviesPage() {
         setLoading(false);
       }
     }
+
     moviesRequest();
   }, [query]);
 
@@ -45,7 +46,7 @@ export default function MoviesPage() {
     <>
       <Formik initialValues={{ search: "" }} onSubmit={handleSubmit}>
         <Form className={css.form}>
-          <Field className={css.input} type="text" name="search"></Field>
+          <Field className={css.input} type="text" name="search" />
           <button className={css.button} type="submit">
             Search
           </button>
@@ -53,8 +54,11 @@ export default function MoviesPage() {
       </Formik>
       {error && <p>Something went wrong! Please try again later.</p>}
       {loading && <p>Loading...</p>}
-      {movies && <MovieList list={movies} />}
-      {query && !loading && movies.length === 0 && <p>Nothing found.</p>}
+      {movies.length > 0 ? (
+        <MovieList list={movies} />
+      ) : (
+        query && !loading && <p>Nothing found.</p>
+      )}
     </>
   );
 }
